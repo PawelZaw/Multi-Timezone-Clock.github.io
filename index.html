@@ -1,0 +1,168 @@
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="moment.js"></script>
+  <script src="moment-timezone-with-data-10-year-range.js"></script>
+  <title>Multi-Timezone Clock</title>
+  <style>
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-image: url("heart.png");
+    }
+    #clocks-container {
+      text-align: center;
+    }
+    .clock {
+      margin: 10px 0;
+    }
+   input[type="time"], .time-display {
+      margin: 5px;
+    }
+    .time-display{
+      font-size: 24px;
+    }
+    p{
+      display: inline-block;
+    }
+
+    .date-time-input{
+      display: flex;
+      justify-content: space-between;
+      width: 250px;
+      margin: auto;
+    }
+    .timezone-hidden{
+      display: none;
+    }
+    
+  </style>
+</head>
+<body>
+  <div id="clocks-container">
+    <h1>Multi-Timezone Clock</h1>
+    <div class="clock" id="clock1">
+      <div class="date-time-input">
+        <p>Australia - Sydney</p>
+        <p class="timezone-hidden">Australia/Sydney</p>
+        <input type="time" onchange="setTime(this, 'Australia/Sydney')" value="00:00" />
+      </div>
+      <div class="date-time-display">
+        <span class="date-display" id="dd1">--</span>
+        <span class="time-display" id="td1">00:00</span>
+      </div>
+    </div>
+    <div class="clock" id="clock2">
+      <div class="date-time-input">
+      <p>Indie - Kolkata</p>
+      <p class="timezone-hidden">Asia/Kolkata</p>
+      <input type="time" onchange="setTime(this, 'Asia/Kolkata')"  value="00:00" />
+      </div>
+      <div class="date-time-display">
+        <span class="date-display" id="dd2">--</span>
+        <span class="time-display" id="td2">00:00</span>
+      </div>
+    </div>
+    <div class="clock" id="clock3">
+      <div class="date-time-input">
+      <p>Poland - Warsaw</p>
+      <p class="timezone-hidden">Europe/Warsaw</p>
+      <input type="time" onchange="setTime(this, 'Europe/Warsaw')"  value="00:00" />
+      </div>
+      <div class="date-time-display">
+        <span class="date-display" id="dd3">--</span>
+        <span class="time-display" id="td3">00:00</span>
+      </div>
+    </div>
+    <div class="clock" id="clock4">
+      <div class="date-time-input">
+      <p>USA - Los Angeles</p>
+      <p class="timezone-hidden">America/Los_Angeles</p>
+      <input type="time" onchange="setTime(this, 'America/Los_Angeles')"  value="00:00"/>
+      </div>
+      <div class="date-time-display">
+        <span class="date-display" id="dd4">--</span>
+        <span class="time-display" id="td4">00:00</span>
+      </div>
+    </div>
+    <div class="clock" id="clock5">
+      <div class="date-time-input">
+      <p>USA - New York</p>
+      <p class="timezone-hidden">America/New_York</p>
+      <input type="time" onchange="setTime(this, 'America/New_York')"  value="00:00" />
+      </div>
+      <div class="date-time-display">
+        <span class="date-display" id="dd5">--</span>
+        <span class="time-display" id="td5">00:00</span>
+      </div>
+    </div>
+    <div class="clock" id="clock6">
+      <div class="date-time-input">
+      <p>Canada - Ontario</p>
+      <p class="timezone-hidden">America/Toronto</p>
+      <input type="time" onchange="setTime(this, 'America/Toronto')"  value="00:00"/>
+      </div>
+      <div class="date-time-display">
+        <span class="date-display" id="dd6">--</span>
+        <span class="time-display" id="td6">00:00</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    const clocks = document.querySelectorAll('.clock');
+
+
+    function setTime(input, sourceTimezone) {
+      const [hours, minutes] = input.value.split(':');
+      let d = new Date();
+      let currentYear = d.getFullYear();  
+      let currentMonth = d.getMonth() + 1;  
+      let currentDay = d.getDate()  
+
+
+      if(currentDay <10){
+        currentDay = `0${currentDay}`;
+      }
+      
+      if(currentMonth <10){
+        currentMonth = `0${currentMonth}`;
+      }
+      
+      const dateInTimezone1 = moment.tz(`${currentYear}-${currentMonth}-${currentDay} ${hours}:${minutes}`, `${sourceTimezone}`); 
+
+  
+      clocks.forEach(clock => {
+        // const timezone = clock.querySelector('input[type=text]').value;
+        // const timezone = clock.querySelector('p').innerHTML;
+        const timezone = clock.querySelector('.timezone-hidden').innerHTML;
+        const timeDisplay = clock.querySelector('.time-display');
+        const dateDisplay = clock.querySelector('.date-display');
+        const timeInput = clock.querySelector('input[type=time]');
+
+        if (timeInput !== input) {
+          timeInput.value = '00:00';
+        }
+
+        const optionsTime = { timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false };
+        const optionsDate = { timeZone: timezone, weekday: 'short', day: '2-digit'  };
+        const localTime = new Intl.DateTimeFormat('en-US', optionsTime).format(dateInTimezone1);
+        const localDate = new Intl.DateTimeFormat('en-US', optionsDate).format(dateInTimezone1);
+
+
+        timeDisplay.textContent = localTime;
+        dateDisplay.textContent = localDate;
+      });
+
+      input.parentNode.querySelector('.time-display').textContent = input.value;
+    }
+  </script>
+</body>
+</html>
