@@ -75,7 +75,7 @@
       <div class="date-time-input">
       <p>Poland - Warsaw</p>
       <p class="timezone-hidden">Europe/Warsaw</p>
-      <input type="time" onchange="setTime(this, 'Europe/Warsaw')"  value="00:00" />
+      <input type="time" id="warsaw-input" onchange="setTime(this, 'Europe/Warsaw')"  value="00:00" />
       </div>
       <div class="date-time-display">
         <span class="date-display" id="dd3">--</span>
@@ -117,6 +117,27 @@
     </div>
   </div>
   <script>
+
+    function getDateInTimezone(input, sourceTimezone){
+      const [hours, minutes] = input.value.split(':');
+      let d = new Date();
+      let currentYear = d.getFullYear();  
+      let currentMonth = d.getMonth() + 1;  
+      let currentDay = d.getDate()  
+
+
+      if(currentDay <10){
+        currentDay = `0${currentDay}`;
+      }
+      
+      if(currentMonth <10){
+        currentMonth = `0${currentMonth}`;
+      }
+      
+      return moment.tz(`${currentYear}-${currentMonth}-${currentDay} ${hours}:${minutes}`, `${sourceTimezone}`); 
+
+    }
+
     const clocks = document.querySelectorAll('.clock');
 
 
@@ -136,7 +157,8 @@
         currentMonth = `0${currentMonth}`;
       }
       
-      const dateInTimezone1 = moment.tz(`${currentYear}-${currentMonth}-${currentDay} ${hours}:${minutes}`, `${sourceTimezone}`); 
+      // const dateInTimezone1 = moment.tz(`${currentYear}-${currentMonth}-${currentDay} ${hours}:${minutes}`, `${sourceTimezone}`); 
+      const dateInTimezone1 = getDateInTimezone(input, sourceTimezone)
 
   
       clocks.forEach(clock => {
@@ -163,6 +185,16 @@
 
       input.parentNode.querySelector('.time-display').textContent = input.value;
     }
+  </script>
+  <script>
+
+  window.addEventListener('load', function () {
+    let warsawInput = document.getElementById("warsaw-input");
+    let currentdate = new Date(); 
+    warsawInput.value = `${currentdate.getHours()}:${currentdate.getMinutes()}`;
+    setTime(warsawInput, 'Europe/Warsaw');
+  })
+
   </script>
 </body>
 </html>
